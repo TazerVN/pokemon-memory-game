@@ -1,4 +1,4 @@
-import { RenderPokemon } from "./components";
+import RenderPokemon from "./components";
 import { useEffect, useState } from "react";
 
 interface Pokemon {
@@ -10,6 +10,14 @@ interface PokemonData {
   name: string;
   url: string;
 }
+
+interface ScoreBoard {
+  currentScore: number;
+  bestScore: number;
+  round: number;
+  winCondition: boolean;
+}
+
 let RNGlist: Array<number> = [];
 async function getPokemonData() {
   try {
@@ -33,7 +41,7 @@ async function getPokemonData() {
 
 function GeneratePokemon(length: number) {
   const [inMemory, setInMemory] = useState<string[]>([]);
-  const [scoreBoard, setScoreBoard] = useState({
+  const [scoreBoard, setScoreBoard] = useState<ScoreBoard>({
     currentScore: 0,
     bestScore: 0,
     round: 0,
@@ -57,11 +65,20 @@ function GeneratePokemon(length: number) {
         };
         dummyList.push(newPokemon);
       }
+      if (dummyList.length <= 0) {
+        for (let i = 0; i < length; i++) {
+          const dummyPokemon: Pokemon = {
+            name: "dummy",
+            sprite: "dummy",
+          };
+          dummyList.push(dummyPokemon);
+        }
+      }
       setList(dummyList);
       SetLoading(false);
     };
     loadData();
-  }, [scoreBoard.round, scoreBoard.winCondition,length]);
+  }, [scoreBoard.round, scoreBoard.winCondition, length]);
 
   return (
     <div className="flex flex-col gap-10">
@@ -102,5 +119,5 @@ function GeneratePokemon(length: number) {
   );
 }
 
-export type { Pokemon, PokemonData };
+export type { Pokemon, PokemonData, ScoreBoard };
 export default GeneratePokemon;

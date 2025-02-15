@@ -1,6 +1,20 @@
-import type { Pokemon } from "./getData";
+import type { Pokemon, ScoreBoard } from "./getData";
 import Image from "next/image";
 import { useState } from "react";
+
+interface pokemonComponent {
+  list: Array<Pokemon>;
+  reRender: CallableFunction;
+  scoreBoard: ScoreBoard;
+  setScoreBoard: CallableFunction;
+  setInMemory: CallableFunction;
+  inMemory: Array<string>;
+}
+
+interface individualComp {
+  list: Array<Pokemon>;
+  onClick: CallableFunction;
+}
 
 function RenderPokemon({
   list,
@@ -9,7 +23,7 @@ function RenderPokemon({
   setScoreBoard,
   setInMemory,
   inMemory,
-}) {
+}: pokemonComponent) {
   function onClick(name: string) {
     if (inMemory.includes(name)) {
       setScoreBoard(() => ({ ...scoreBoard, currentScore: 0 }));
@@ -18,7 +32,7 @@ function RenderPokemon({
       return;
     }
     if (scoreBoard.currentScore + 1 === 20) {
-      setScoreBoard((previous) => ({
+      setScoreBoard((previous: ScoreBoard) => ({
         ...previous,
         winCondition: true,
       }));
@@ -26,12 +40,12 @@ function RenderPokemon({
     const newArray = [...inMemory];
     newArray.push(name);
     setInMemory(newArray);
-    setScoreBoard((previous) => ({
+    setScoreBoard((previous: ScoreBoard) => ({
       ...previous,
       currentScore: previous.currentScore + 1,
     }));
     if (scoreBoard.currentScore >= scoreBoard.bestScore) {
-      setScoreBoard((previous) => ({
+      setScoreBoard((previous: ScoreBoard) => ({
         ...previous,
         bestScore: previous.currentScore,
       }));
@@ -47,11 +61,15 @@ function RenderPokemon({
   );
 }
 
-function RenderIndividual({ list, onClick }) {
+function RenderIndividual({ list, onClick }: individualComp) {
+  let currentList: Array<Pokemon> = list;
+  if (list == undefined) {
+    currentList = [{ name: "dummy", sprite: "dummy" }];
+  }
   const [style, setStyle] = useState("");
   return (
     <ul className="grid grid-cols-3 grid-rows-2 gap-10 md:gap-15 md:grid-cols-4 lg:grid-cols-6 justify-center">
-      {list.map((p: Pokemon) => (
+      {currentList.map((p: Pokemon) => (
         <li
           className={
             style +
@@ -78,4 +96,5 @@ function RenderIndividual({ list, onClick }) {
   );
 }
 
+export default RenderPokemon;
 export { RenderIndividual, RenderPokemon };

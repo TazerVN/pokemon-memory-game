@@ -6,14 +6,16 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'raw.githubusercontent.com',
-        port: '',
-        pathname: '/**',
-        search: '',
+        protocol: "https",
+        hostname: "raw.githubusercontent.com",
+        port: "",
+        pathname: "/**",
+        search: "",
       },
     ],
   },
+  pageExtensions: ["tsx", "ts", "jsx", "js"],
+  future: { webpack5: true },
 };
 
 export default nextConfig;
