@@ -1,5 +1,4 @@
-import { get } from "http";
-import { RenderIndividual, RenderPokemon } from "./components";
+import { RenderPokemon } from "./components";
 import { useEffect, useState } from "react";
 
 interface Pokemon {
@@ -17,8 +16,6 @@ async function getPokemonData() {
     let RNG = Math.floor(Math.random() * 20) + 1;
     while (RNGlist.includes(RNG)) {
       RNG = Math.floor(Math.random() * 20) + 1;
-      console.log(RNG);
-      console.log(RNGlist);
     }
     RNGlist.push(RNG);
     const pokemonData = await fetch(
@@ -28,7 +25,6 @@ async function getPokemonData() {
       }
     );
     const json = await pokemonData.json();
-    console.log(json);
     return json;
   } catch (err) {
     console.log(err);
@@ -48,7 +44,7 @@ function GeneratePokemon(length: number) {
   const [loading, SetLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    const dummyList: Array<any> = [];
+    const dummyList: Array<Pokemon> = [];
     const loadData = async () => {
       SetLoading(true);
       for (let i = 0; i < length; i++) {
@@ -65,7 +61,7 @@ function GeneratePokemon(length: number) {
       SetLoading(false);
     };
     loadData();
-  }, [scoreBoard.round, scoreBoard.winCondition]);
+  }, [scoreBoard.round, scoreBoard.winCondition,length]);
 
   return (
     <div className="flex flex-col gap-10">
