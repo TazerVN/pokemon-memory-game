@@ -28,35 +28,30 @@ async function getPokemonData(): Promise<Pokemon> {
     RNG = Math.floor(Math.random() * 20) + 1;
   }
   RNGlist.push(RNG);
-  if (pokemonList[RNG]) {
-    return pokemonList[RNG];
-  }
-  try {
-    const pokemonData: Response = await fetch(
-      "https://pokeapi.co/api/v2/pokemon/" + RNG.toString(),
-      {
-        method: "GET",
+  if (pokemonList.length < 1) {
+    for (let i = 1; i < 21; i++) {
+      try {
+        const pokemonData: Response = await fetch(
+          "https://pokeapi.co/api/v2/pokemon/" + i,
+          {
+            method: "GET",
+          }
+        );
+        const json = await pokemonData.json();
+        const newPokemon: Pokemon = {
+          name: json.name,
+          sprite:
+            json.sprites.versions["generation-v"]["black-white"].animated
+              .front_default,
+          id: i,
+        };
+        pokemonList[newPokemon.id] = newPokemon;
+      } catch {
+        return pokemonList[RNG];
       }
-    );
-    const json = await pokemonData.json();
-    const newPokemon: Pokemon = {
-      name: json.name,
-      sprite:
-        json.sprites.versions["generation-v"]["black-white"].animated
-          .front_default,
-      id: RNG,
-    };
-    pokemonList[newPokemon.id] = newPokemon;
-
-    return newPokemon;
-  } catch {
-    const unknownPokemon: Pokemon = {
-      name: "dummy",
-      sprite: "/dummy",
-      id: RNG,
-    };
-    return unknownPokemon;
+    }
   }
+  return pokemonList[RNG];
 }
 
 function GeneratePokemon(length: number) {
