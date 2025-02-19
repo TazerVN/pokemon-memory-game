@@ -62,7 +62,7 @@ function RenderPokemon({
 }
 
 function RenderIndividual({ list, onClick }: individualComp) {
-  const currentList: Array<Pokemon> = list;
+  const currentList: Array<Pokemon> = list || [];
   if (currentList.length < 0) {
     const dummy: Pokemon = {
       name: "dummy",
