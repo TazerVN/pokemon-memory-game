@@ -63,11 +63,19 @@ function RenderPokemon({
 
 function RenderIndividual({ list, onClick }: individualComp) {
   const currentList: Array<Pokemon> = list;
+  if (currentList.length < 0) {
+    const dummy: Pokemon = {
+      name: "dummy",
+      sprite: "/dummy",
+      id: 0,
+    };
+    currentList.push(dummy);
+  }
   const [style, setStyle] = useState("");
 
-  useEffect(() =>{
-    setStyle("")
-  }, [list])
+  useEffect(() => {
+    setStyle("");
+  }, [list]);
   return (
     <ul className="grid grid-cols-3 grid-rows-2 gap-10 md:gap-15 md:grid-cols-4 lg:grid-cols-6 justify-center">
       {currentList.map((p: Pokemon) => (
