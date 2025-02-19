@@ -1,6 +1,6 @@
 import type { Pokemon, ScoreBoard } from "./getData";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface pokemonComponent {
   list: Array<Pokemon>;
@@ -62,11 +62,12 @@ function RenderPokemon({
 }
 
 function RenderIndividual({ list, onClick }: individualComp) {
-  let currentList: Array<Pokemon> = list;
-  if (list == undefined) {
-    currentList = [{ name: "dummy", sprite: "dummy" }];
-  }
+  const currentList: Array<Pokemon> = list;
   const [style, setStyle] = useState("");
+
+  useEffect(() =>{
+    setStyle("")
+  }, [list])
   return (
     <ul className="grid grid-cols-3 grid-rows-2 gap-10 md:gap-15 md:grid-cols-4 lg:grid-cols-6 justify-center">
       {currentList.map((p: Pokemon) => (
@@ -75,14 +76,13 @@ function RenderIndividual({ list, onClick }: individualComp) {
             style +
             " hover:scale-150 hover:cursor-pointer transition-all justify-end gap-2 items-center flex flex-col col-span-1 w-20 md:w-40 lg:w-50"
           }
-          key={p.name}
+          key={p.id}
           onClick={() => {
             setStyle("opacity-0");
             setTimeout(() => onClick(p.name), 200);
           }}
         >
           <Image
-            unoptimized
             src={p.sprite}
             alt={p.name + " sprite"}
             width={100}

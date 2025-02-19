@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 interface Pokemon {
   name: string;
   sprite: string;
+  id: number;
 }
 
 interface PokemonData {
@@ -19,23 +20,42 @@ interface ScoreBoard {
 }
 
 let RNGlist: Array<number> = [];
-async function getPokemonData() {
+const pokemonList: Array<Pokemon> = [];
+
+async function getPokemonData(): Promise<Pokemon> {
+  let RNG = Math.floor(Math.random() * 20) + 1;
+  while (RNGlist.includes(RNG)) {
+    RNG = Math.floor(Math.random() * 20) + 1;
+  }
+  RNGlist.push(RNG);
+  if (pokemonList[RNG]) {
+    return pokemonList[RNG];
+  }
   try {
-    let RNG = Math.floor(Math.random() * 20) + 1;
-    while (RNGlist.includes(RNG)) {
-      RNG = Math.floor(Math.random() * 20) + 1;
-    }
-    RNGlist.push(RNG);
-    const pokemonData = await fetch(
+    const pokemonData: Response = await fetch(
       "https://pokeapi.co/api/v2/pokemon/" + RNG.toString(),
       {
         method: "GET",
       }
     );
     const json = await pokemonData.json();
-    return json;
-  } catch (err) {
-    console.log(err);
+    const newPokemon: Pokemon = {
+      name: json.name,
+      sprite:
+        json.sprites.versions["generation-v"]["black-white"].animated
+          .front_default,
+      id: RNG,
+    };
+    pokemonList[newPokemon.id] = newPokemon;
+
+    return newPokemon;
+  } catch {
+    const unknownPokemon: Pokemon = {
+      name: "dummy",
+      sprite: "/dummy",
+      id: RNG,
+    };
+    return unknownPokemon;
   }
 }
 
@@ -53,30 +73,19 @@ function GeneratePokemon(length: number) {
 
   useEffect(() => {
     const dummyList: Array<Pokemon> = [];
+    SetLoading(true);
     const loadData = async () => {
-      SetLoading(true);
       for (let i = 0; i < length; i++) {
-        const data = await getPokemonData();
-        const newPokemon: Pokemon = {
-          name: data.name,
-          sprite:
-            data.sprites.versions["generation-v"]["black-white"].animated
-              .front_default,
-        };
-        dummyList.push(newPokemon);
-      }
-      if (dummyList.length <= 0) {
-        for (let i = 0; i < length; i++) {
-          const dummyPokemon: Pokemon = {
-            name: "dummy",
-            sprite: "dummy",
-          };
-          dummyList.push(dummyPokemon);
+        try {
+          const data: Pokemon = await getPokemonData();
+          dummyList.push(data);
+        } catch (err) {
+          console.log(err);
         }
       }
       setList(dummyList);
-      SetLoading(false);
     };
+    SetLoading(false);
     loadData();
   }, [scoreBoard.round, scoreBoard.winCondition, length]);
 

@@ -16,7 +16,7 @@ export default function Home() {
   const [secret, setSecret] = useState(false);
   return (
     <div
-      className={`${geistSans.variable} ${geistMono.variable} grid grid-rows-[20px_1fr_20px] justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]`}
+      className={`${geistSans.variable} ${geistMono.variable} grid grid-rows-[20px_1fr_20px] justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)] overflow-auto scroll`}
     >
       <div className="flex flex-col flex-auto h-20 justify-center items-center">
         <h1
@@ -38,7 +38,7 @@ export default function Home() {
       </div>
 
       <main className="flex flex-col">
-        <div className="flex flex-col">{GeneratePokemon(12)}</div>
+        <div className="flex flex-col focus">{GeneratePokemon(12)}</div>
       </main>
     </div>
   );
