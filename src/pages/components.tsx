@@ -91,6 +91,7 @@ function RenderIndividual({ list, onClick }: individualComp) {
           }}
         >
           <Image
+          unoptimized
             src={p.sprite}
             alt={p.name + " sprite"}
             width={100}

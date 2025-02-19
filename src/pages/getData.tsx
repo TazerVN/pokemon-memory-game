@@ -73,8 +73,8 @@ function GeneratePokemon(length: number) {
 
   useEffect(() => {
     const dummyList: Array<Pokemon> = [];
-    SetLoading(true);
     const loadData = async () => {
+      SetLoading(true);
       for (let i = 0; i < length; i++) {
         try {
           const data: Pokemon = await getPokemonData();
@@ -84,8 +84,8 @@ function GeneratePokemon(length: number) {
         }
       }
       setList(dummyList);
+      SetLoading(false);
     };
-    SetLoading(false);
     loadData();
   }, [scoreBoard.round, scoreBoard.winCondition, length]);
 
