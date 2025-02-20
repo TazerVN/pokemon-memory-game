@@ -19,36 +19,39 @@ interface ScoreBoard {
   winCondition: boolean;
 }
 
-let RNGlist: Array<number> = [];
+const RNGlist: Array<number> = [];
 const pokemonList: Array<Pokemon> = [];
 
-async function getPokemonData(): Promise<Pokemon> {
-  let RNG = Math.floor(Math.random() * 20) + 1;
+async function getPokemonData(length: number): Promise<Pokemon> {
+  let RNG = Math.floor(Math.random() * length) + 1;
   while (RNGlist.includes(RNG)) {
-    RNG = Math.floor(Math.random() * 20) + 1;
+    RNG = Math.floor(Math.random() * length) + 1;
   }
   RNGlist.push(RNG);
   if (pokemonList.length < 1) {
-    for (let i = 1; i < 21; i++) {
-      try {
-        const pokemonData: Response = await fetch(
-          "https://pokeapi.co/api/v2/pokemon/" + i,
-          {
-            method: "GET",
-          }
-        );
-        const json = await pokemonData.json();
-        const newPokemon: Pokemon = {
-          name: json.name,
-          sprite:
-            json.sprites.versions["generation-v"]["black-white"].animated
-              .front_default,
-          id: i,
-        };
-        pokemonList[newPokemon.id] = newPokemon;
-      } catch {
-        return pokemonList[RNG];
-      }
+    for (let i = 1; i <= length; i++) {
+      const fetchData = async () => {
+        try {
+          const pokemonData: Response = await fetch(
+            "https://pokeapi.co/api/v2/pokemon/" + i,
+            {
+              method: "GET",
+            }
+          );
+          const json = await pokemonData.json();
+          const newPokemon: Pokemon = {
+            name: json.name,
+            sprite:
+              json.sprites.versions["generation-v"]["black-white"].animated
+                .front_default,
+            id: i,
+          };
+          pokemonList[newPokemon.id] = newPokemon;
+        } catch {
+          return pokemonList[RNG];
+        }
+      };
+      await fetchData();
     }
   }
   return pokemonList[RNG];
@@ -72,7 +75,7 @@ function GeneratePokemon(length: number) {
       SetLoading(true);
       for (let i = 0; i < length; i++) {
         try {
-          const data: Pokemon = await getPokemonData();
+          const data: Pokemon = await getPokemonData(length);
           dummyList.push(data);
         } catch (err) {
           console.log(err);
@@ -82,6 +85,7 @@ function GeneratePokemon(length: number) {
       SetLoading(false);
     };
     loadData();
+    return setList([]);
   }, [scoreBoard.round, scoreBoard.winCondition, length]);
 
   return (
@@ -104,8 +108,7 @@ function GeneratePokemon(length: number) {
             <RenderPokemon
               list={list}
               reRender={() => {
-                RNGlist = [];
-                setList([]);
+                RNGlist.length = 0;
                 setScoreBoard((previous) => ({
                   ...previous,
                   round: previous.round + 1,

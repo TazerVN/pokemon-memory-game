@@ -71,10 +71,10 @@ function RenderIndividual({ list, onClick }: individualComp) {
     };
     currentList.push(dummy);
   }
-  const [style, setStyle] = useState("");
+  const [style, setStyle] = useState("opacity-100");
 
   useEffect(() => {
-    setStyle("");
+    setStyle("opacity-100");
   }, [list]);
   return (
     <ul className="grid grid-cols-3 grid-rows-2 gap-10 md:gap-15 md:grid-cols-4 lg:grid-cols-6 justify-center">
